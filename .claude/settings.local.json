@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e \"const r = require.resolve\\('reka-ui'\\); console.log\\(r\\)\")",
+      "Bash(npx vue-tsc *)",
+      "Bash(npx vite *)"
+    ]
+  }
+}
