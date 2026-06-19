@@ -1,19 +1,21 @@
 <script setup lang="ts">
 import { Cable, Save, Trash2 } from 'lucide-vue-next'
 import { reactive, ref, watch } from 'vue'
+import InlineNotice from '@/components/InlineNotice.vue'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { DialogContent, DialogDescription, DialogHeader, DialogRoot, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
+import { useNotice } from '@/composables/useNotice'
 import { usePrinterStore } from '@/stores/printer'
 
 const store = usePrinterStore()
 const open = defineModel<boolean>('open', { required: true })
 
 const connectAfterSave = ref(true)
-const notice = ref<string | null>(null)
+const { notice, showNotice } = useNotice()
 
 const form = reactive({
   name: 'Bambu Lab',
@@ -64,38 +66,30 @@ async function handleDelete(): Promise<void> {
   form.accessCode = ''
   showNotice('连接配置已删除')
 }
-
-function showNotice(message: string): void {
-  notice.value = message
-  window.setTimeout(() => {
-    if (notice.value === message)
-      notice.value = null
-  }, 2800)
-}
 </script>
 
 <template>
   <DialogRoot v-model:open="open">
     <DialogContent class="max-h-[85vh] overflow-y-auto sm:max-w-lg">
       <DialogHeader>
-        <DialogTitle class="flex items-center gap-2 text-lg">
-          <Cable class="size-5" />
+        <DialogTitle class="flex items-center gap-2 text-lg uppercase tracking-wide">
+          <Cable class="size-5 text-primary" />
           连接配置
         </DialogTitle>
         <DialogDescription>打印机局域网凭据与连接参数</DialogDescription>
       </DialogHeader>
 
-      <div v-if="notice" class="rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-900">
+      <InlineNotice v-if="notice">
         {{ notice }}
-      </div>
+      </InlineNotice>
 
-      <div v-if="store.error" class="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-900">
+      <InlineNotice v-if="store.error" variant="destructive">
         {{ store.error }}
-      </div>
+      </InlineNotice>
 
       <Card>
         <CardHeader>
-          <CardTitle class="text-base">
+          <CardTitle class="text-sm font-medium uppercase tracking-wider">
             打印机连接
           </CardTitle>
           <CardDescription>保存到后端本地配置文件</CardDescription>

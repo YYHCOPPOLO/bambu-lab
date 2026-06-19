@@ -3,7 +3,14 @@
     "allow": [
       "Bash(node -e \"const r = require.resolve\\('reka-ui'\\); console.log\\(r\\)\")",
       "Bash(npx vue-tsc *)",
-      "Bash(npx vite *)"
+      "Bash(npx vite *)",
+      "Bash(node scripts/typecheck.mjs)",
+      "Bash(./node_modules/.bin/vue-tsc -b)",
+      "Bash(echo \"=== EXIT: $? ===\")",
+      "Bash(git stash *)",
+      "Bash(./node_modules/.bin/eslint src/pages/index.vue src/components/ConnectionConfigDialog.vue)",
+      "Bash(pnpm typecheck *)",
+      "Bash(pnpm build:web)"
     ]
   }
 }

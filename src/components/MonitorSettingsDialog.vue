@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import type { CameraSource } from '@/types/printer'
 import { Camera, Save, Settings, Video } from 'lucide-vue-next'
-import { reactive, ref, watch } from 'vue'
+import { reactive, watch } from 'vue'
+import InlineNotice from '@/components/InlineNotice.vue'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { DialogContent, DialogDescription, DialogHeader, DialogRoot, DialogTitle } from '@/components/ui/dialog'
@@ -8,13 +10,13 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import { Switch } from '@/components/ui/switch'
+import { useNotice } from '@/composables/useNotice'
 import { usePrinterStore } from '@/stores/printer'
-import type { CameraSource } from '@/types/printer'
 
 const store = usePrinterStore()
 const open = defineModel<boolean>('open', { required: true })
 
-const notice = ref<string | null>(null)
+const { notice, showNotice } = useNotice()
 
 const form = reactive({
   cameraEnabled: true,
@@ -66,39 +68,31 @@ async function handleSubmit(): Promise<void> {
 function setCameraSource(source: CameraSource): void {
   form.cameraSource = source
 }
-
-function showNotice(message: string): void {
-  notice.value = message
-  window.setTimeout(() => {
-    if (notice.value === message)
-      notice.value = null
-  }, 2800)
-}
 </script>
 
 <template>
   <DialogRoot v-model:open="open">
     <DialogContent class="max-h-[85vh] overflow-y-auto sm:max-w-lg">
       <DialogHeader>
-        <DialogTitle class="flex items-center gap-2 text-lg">
-          <Settings class="size-5" />
+        <DialogTitle class="flex items-center gap-2 text-lg uppercase tracking-wide">
+          <Settings class="size-5 text-primary" />
           监控设置
         </DialogTitle>
         <DialogDescription>实时视频、Webhook 与本地历史保留</DialogDescription>
       </DialogHeader>
 
-      <div v-if="notice" class="rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-900">
+      <InlineNotice v-if="notice">
         {{ notice }}
-      </div>
+      </InlineNotice>
 
-      <div v-if="store.error" class="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-900">
+      <InlineNotice v-if="store.error" variant="destructive">
         {{ store.error }}
-      </div>
+      </InlineNotice>
 
       <form class="space-y-4" @submit.prevent="handleSubmit">
         <Card>
           <CardHeader>
-            <CardTitle class="text-base">
+            <CardTitle class="text-sm font-medium uppercase tracking-wider">
               实时视频
             </CardTitle>
             <CardDescription>内置相机或外部 HTTP/RTSP 源由后端 ffmpeg 代理为 MJPEG</CardDescription>
@@ -110,11 +104,11 @@ function showNotice(message: string): void {
             </div>
 
             <div class="grid grid-cols-2 gap-2">
-              <Button type="button" variant="outline" :class="form.cameraSource === 'bambu' ? 'border-primary' : ''" @click="setCameraSource('bambu')">
+              <Button type="button" variant="outline" :class="form.cameraSource === 'bambu' ? 'border-primary bg-primary/10 text-primary' : ''" @click="setCameraSource('bambu')">
                 <Camera class="size-4" />
                 内置
               </Button>
-              <Button type="button" variant="outline" :class="form.cameraSource === 'external' ? 'border-primary' : ''" @click="setCameraSource('external')">
+              <Button type="button" variant="outline" :class="form.cameraSource === 'external' ? 'border-primary bg-primary/10 text-primary' : ''" @click="setCameraSource('external')">
                 <Video class="size-4" />
                 外部
               </Button>
@@ -129,7 +123,7 @@ function showNotice(message: string): void {
 
         <Card>
           <CardHeader>
-            <CardTitle class="text-base">
+            <CardTitle class="text-sm font-medium uppercase tracking-wider">
               Webhook 与历史
             </CardTitle>
             <CardDescription>事件推送和本地运行数据保留时间</CardDescription>

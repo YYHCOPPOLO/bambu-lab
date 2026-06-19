@@ -27,6 +27,7 @@ declare module 'vue' {
     DialogContent: typeof import('./src/components/ui/dialog/DialogContent.vue')['default']
     DialogHeader: typeof import('./src/components/ui/dialog/DialogHeader.vue')['default']
     DialogOverlay: typeof import('./src/components/ui/dialog/DialogOverlay.vue')['default']
+    InlineNotice: typeof import('./src/components/InlineNotice.vue')['default']
     Input: typeof import('./src/components/ui/input/Input.vue')['default']
     Label: typeof import('./src/components/ui/label/Label.vue')['default']
     MonitorSettingsDialog: typeof import('./src/components/MonitorSettingsDialog.vue')['default']
